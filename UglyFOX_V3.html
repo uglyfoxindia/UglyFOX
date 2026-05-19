@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uglyfox | AI-Powered UGC Ads Agency</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Check for saved theme preference or system preference before rendering to prevent flashing
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        boxLight: '#F5F5F3',
+                        boxDark: '#131314',
+                        zinc: {
+                            50: '#fafafa', 100: '#f4f4f5', 200: '#e4e4e7',
+                            300: '#d4d4d8', 400: '#a1a1aa', 500: '#71717a',
+                            600: '#52525b', 700: '#3f3f46', 800: '#27272a',
+                            900: '#18181b', 950: '#0a0a0a',
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Clean scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+    </style>
+</head>
+<body class="font-sans antialiased bg-white text-zinc-900 dark:bg-[#0a0a0a] dark:text-zinc-100 transition-colors duration-700 selection:bg-zinc-200 dark:selection:bg-zinc-800 overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-zinc-200/50 dark:border-zinc-800/50 transition-colors duration-700">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <div class="w-8 h-8 bg-gradient-to-tr from-orange-600 to-orange-400 flex items-center justify-center rounded-xl shadow-lg shadow-orange-500/20 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
+                        <div class="w-2.5 h-2.5 bg-white rounded-full transition-colors duration-700"></div>
+                    </div>
+                    <span class="text-xl font-semibold tracking-tight">Uglyfox</span>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="relative flex items-center p-1 w-14 h-8 rounded-full bg-boxLight dark:bg-boxDark border border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-700 focus:outline-none hover:ring-2 ring-orange-500/50 cursor-pointer overflow-hidden">
+                    <!-- Sliding Highlight -->
+                    <div class="absolute left-1 top-1 w-6 h-6 rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] dark:translate-x-6 z-10"></div>
+                    
+                    <!-- Icons -->
+                    <div class="relative w-full flex justify-between items-center px-[3px] z-0 pointer-events-none">
+                        <i data-lucide="sun" class="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-600 transition-colors duration-700 ml-0.5"></i>
+                        <i data-lucide="moon" class="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-300 transition-colors duration-700 mr-0.5"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container wrapping the "Boxes" -->
+    <main class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 flex flex-col gap-8 md:gap-10">
+        
+        <!-- Box 1: Hero Section -->
+        <section class="reveal bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-24 px-6 md:px-16 flex items-center justify-center text-center relative transition-colors duration-700 overflow-hidden shadow-sm">
+            
+            <!-- Ambient Background Glows -->
+            <div class="absolute top-0 -left-4 w-72 h-72 bg-orange-400 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 dark:opacity-10 animate-blob"></div>
+            <div class="absolute top-0 -right-4 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 dark:opacity-10 animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 dark:opacity-10 animate-blob animation-delay-4000"></div>
+
+            <div class="max-w-4xl mx-auto relative z-10">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-8 transition-colors duration-700 shadow-sm animate-float">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                    Next-Gen AI Generation
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-semibold tracking-tight mb-8 text-zinc-900 dark:text-white leading-[1.05]">
+                    Stop scrolling. <br class="hidden md:block" />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-400 dark:from-zinc-400 dark:to-zinc-600">Start converting.</span>
+                </h1>
+                
+                <p class="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Uglyfox creates hyper-realistic, AI-generated UGC ads that lower your CPA and scale infinitely. No actors, no shoots, just pure performance.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#contact" class="group inline-flex items-center justify-center px-8 py-4 rounded-full text-sm font-semibold text-white bg-zinc-900 hover:bg-zinc-800 dark:text-black dark:bg-white dark:hover:bg-zinc-200 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                        Start Project
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#examples" class="inline-flex items-center justify-center px-8 py-4 rounded-full text-sm font-medium text-zinc-700 bg-white border border-zinc-200/80 hover:bg-zinc-50 dark:text-zinc-300 dark:bg-[#0a0a0a] dark:border-zinc-800 dark:hover:bg-zinc-900 transition-all duration-300 hover:shadow-md">
+                        View Examples
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Box 2: Portfolio/Work Section (Dynamic Marquee restored) -->
+        <section id="portfolio" class="reveal delay-200 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-20 overflow-hidden transition-colors duration-700 shadow-sm relative">
+            <div class="px-6 md:px-12 lg:px-16 mb-10">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-3">Synthetic Performances</h2>
+                        <p class="text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">These aren't real people. They are highly optimized digital creations designed to drive conversions. Drag to explore.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Marquee Container -->
+            <div id="marquee-container" class="relative w-full hide-scrollbar group cursor-grab active:cursor-grabbing py-4 select-none touch-pan-y">
+                <!-- Scrolling Content Wrapper -->
+                <div id="marquee-track" class="flex w-max will-change-transform">
+                    
+                    <!-- Set 1 -->
+                    <div id="marquee-set-1" class="flex gap-4 md:gap-6 pr-4 md:pr-6">
+                        <!-- Card 1 -->
+                        <div class="relative w-[200px] md:w-[260px] aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50 flex-shrink-0 group/card shadow-lg hover:shadow-xl transition-all duration-300">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-woman-applying-lotion-on-her-face-4174-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 opacity-80 group-hover/card:opacity-90 transition-opacity duration-300"></div>
+                            
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <span class="bg-white text-black font-bold text-sm px-3 py-1.5 rounded-lg transform -rotate-3 opacity-95 shadow-xl transition-transform duration-300 group-hover/card:scale-110">Skincare Hacks ✨</span>
+                            </div>
+
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                                <span class="bg-black/60 backdrop-blur-md text-white text-xs font-semibold tracking-wide px-2.5 py-1 rounded-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> 4.1x ROAS
+                                </span>
+                            </div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-6 h-6 rounded-full bg-zinc-300 overflow-hidden border-2 border-white/50">
+                                        <img src="https://i.pravatar.cc/100?img=1" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-white text-xs font-semibold drop-shadow-md">@sarah_glows</span>
+                                </div>
+                                <p class="text-zinc-300 text-xs leading-snug line-clamp-2 drop-shadow-md font-medium">"This AI avatar converted 3x better than our human creators..."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="relative w-[200px] md:w-[260px] aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50 flex-shrink-0 group/card shadow-lg hover:shadow-xl transition-all duration-300">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-person-holding-a-smartphone-in-their-hands-28751-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 opacity-80 group-hover/card:opacity-90 transition-opacity duration-300"></div>
+                            
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <span class="bg-yellow-400 text-black font-bold text-sm px-3 py-1.5 rounded-lg transform rotate-2 opacity-95 shadow-xl transition-transform duration-300 group-hover/card:scale-110">NEW DROP 🔥</span>
+                            </div>
+
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                                <span class="bg-black/60 backdrop-blur-md text-white text-xs font-semibold tracking-wide px-2.5 py-1 rounded-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> 2.8x ROAS
+                                </span>
+                            </div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-6 h-6 rounded-full bg-zinc-300 overflow-hidden border-2 border-white/50">
+                                        <img src="https://i.pravatar.cc/100?img=11" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-white text-xs font-semibold drop-shadow-md">@tech_daily</span>
+                                </div>
+                                <p class="text-zinc-300 text-xs leading-snug line-clamp-2 drop-shadow-md font-medium">"You need to see this app update right now..."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="relative w-[200px] md:w-[260px] aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50 flex-shrink-0 group/card shadow-lg hover:shadow-xl transition-all duration-300">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-young-woman-talking-on-video-call-in-the-street-34573-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 opacity-80 group-hover/card:opacity-90 transition-opacity duration-300"></div>
+                            
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none mt-16">
+                                <span class="bg-white text-black font-bold text-sm px-3 py-1.5 rounded-lg transform -rotate-1 opacity-95 shadow-xl transition-transform duration-300 group-hover/card:scale-110">Game Changer 🤯</span>
+                            </div>
+
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                                <span class="bg-black/60 backdrop-blur-md text-white text-xs font-semibold tracking-wide px-2.5 py-1 rounded-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> 5.2x ROAS
+                                </span>
+                            </div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-6 h-6 rounded-full bg-zinc-300 overflow-hidden border-2 border-white/50">
+                                        <img src="https://i.pravatar.cc/100?img=5" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-white text-xs font-semibold drop-shadow-md">@jessica_reviews</span>
+                                </div>
+                                <p class="text-zinc-300 text-xs leading-snug line-clamp-2 drop-shadow-md font-medium">"Literally the best tool I have used all year."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="relative w-[200px] md:w-[260px] aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50 flex-shrink-0 group/card shadow-lg hover:shadow-xl transition-all duration-300">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-man-runs-past-stone-wall-1456-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 opacity-80 group-hover/card:opacity-90 transition-opacity duration-300"></div>
+                            
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none mb-10">
+                                <span class="bg-red-500 text-white font-bold text-sm px-3 py-1.5 rounded-lg transform rotate-2 opacity-95 shadow-xl transition-transform duration-300 group-hover/card:scale-110">BEAT YOUR PB 🏃‍♂️</span>
+                            </div>
+
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                                <span class="bg-black/60 backdrop-blur-md text-white text-xs font-semibold tracking-wide px-2.5 py-1 rounded-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> 3.5x ROAS
+                                </span>
+                            </div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-6 h-6 rounded-full bg-zinc-300 overflow-hidden border-2 border-white/50">
+                                        <img src="https://i.pravatar.cc/100?img=12" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-white text-xs font-semibold drop-shadow-md">@run_elite</span>
+                                </div>
+                                <p class="text-zinc-300 text-xs leading-snug line-clamp-2 drop-shadow-md font-medium">"Training got so much easier with this technique."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div class="relative w-[200px] md:w-[260px] aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50 flex-shrink-0 group/card shadow-lg hover:shadow-xl transition-all duration-300">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 opacity-80 group-hover/card:opacity-90 transition-opacity duration-300"></div>
+                            
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <span class="bg-purple-500 text-white font-bold text-sm px-3 py-1.5 rounded-lg transform -rotate-3 opacity-95 shadow-xl transition-transform duration-300 group-hover/card:scale-110">NIGHT VIBES 🌃</span>
+                            </div>
+
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                                <span class="bg-black/60 backdrop-blur-md text-white text-xs font-semibold tracking-wide px-2.5 py-1 rounded-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> 4.8x ROAS
+                                </span>
+                            </div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-6 h-6 rounded-full bg-zinc-300 overflow-hidden border-2 border-white/50">
+                                        <img src="https://i.pravatar.cc/100?img=9" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-white text-xs font-semibold drop-shadow-md">@neon_dreams</span>
+                                </div>
+                                <p class="text-zinc-300 text-xs leading-snug line-clamp-2 drop-shadow-md font-medium">"Aesthetics on point. AI generation makes it too easy."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Set 2 (Exact Clone for Seamless Loop created dynamically by JS, but keeping HTML for fallback) -->
+                    <div id="marquee-set-2" class="flex gap-4 md:gap-6 pr-4 md:pr-6" aria-hidden="true">
+                        <!-- Duplicated cards omitted here for brevity; JS will clone Set 1 automatically to ensure perfect sync -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Box 3: Services Section -->
+        <section class="reveal delay-200 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-20 px-6 md:px-12 lg:px-16 transition-colors duration-700 shadow-sm">
+            <div class="mb-14 text-center md:text-left">
+                <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-4">The Unfair Advantage</h2>
+                <p class="text-base md:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl">Traditional UGC is slow and expensive. We utilize generative AI to build your high-converting ad pipeline in a fraction of the time.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <!-- Inner Service Card 1 -->
+                <div class="group bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 flex items-center justify-center mb-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200/50 dark:border-zinc-800/50 group-hover:bg-orange-50 group-hover:text-orange-500 group-hover:border-orange-200 dark:group-hover:bg-orange-500/10 dark:group-hover:border-orange-500/30 transition-colors">
+                        <i data-lucide="user" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-zinc-900 dark:text-white">AI Avatars & Voices</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+                        Photorealistic, diverse AI actors delivering perfectly scripted hooks. Clone top-performing styles instantly.
+                    </p>
+                </div>
+
+                <!-- Inner Service Card 2 -->
+                <div class="group bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 flex items-center justify-center mb-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200/50 dark:border-zinc-800/50 group-hover:bg-purple-50 group-hover:text-purple-500 group-hover:border-purple-200 dark:group-hover:bg-purple-500/10 dark:group-hover:border-purple-500/30 transition-colors">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-zinc-900 dark:text-white">Volume Testing</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+                        Generate 50+ variations of hooks and CTAs in days. Find the winning combination mathematically.
+                    </p>
+                </div>
+
+                <!-- Inner Service Card 3 -->
+                <div class="group bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 flex items-center justify-center mb-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200/50 dark:border-zinc-800/50 group-hover:bg-blue-50 group-hover:text-blue-500 group-hover:border-blue-200 dark:group-hover:bg-blue-500/10 dark:group-hover:border-blue-500/30 transition-colors">
+                        <i data-lucide="activity" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-zinc-900 dark:text-white">Performance Editing</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+                        Fast-paced editing, dynamic captions, and psychological triggers designed purely for algorithmic distribution.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Box 1.5: Examples Section (Masonry Layout like Reference Image) -->
+        <section id="examples" class="reveal delay-100 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-20 overflow-hidden transition-colors duration-700 shadow-sm relative">
+            <div class="px-6 md:px-12 lg:px-16 mb-10">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div class="max-w-2xl">
+                        <h2 class="text-3xl md:text-5xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-4">The Output Speaks.</h2>
+                        <p class="text-lg text-zinc-600 dark:text-zinc-400">Scroll-stopping creatives engineered for modern platforms. See the quality of our AI-generated actors, environments, and scripting.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4 md:px-8 max-w-[1400px] mx-auto">
+                <!-- Masonry Grid mimicking the image -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    
+                    <!-- Column 1 -->
+                    <div class="flex flex-col gap-3 md:gap-4">
+                        <!-- Horizontal -->
+                        <div class="relative w-full aspect-[4/3] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-animation-of-futuristic-devices-99786-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <!-- Vertical 9:16 -->
+                        <div class="relative w-full aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-woman-applying-lotion-on-her-face-4174-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="flex flex-col gap-3 md:gap-4">
+                        <!-- Vertical 9:16 -->
+                        <div class="relative w-full aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-young-woman-talking-on-video-call-in-the-street-34573-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <!-- Square -->
+                        <div class="relative w-full aspect-square rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-person-holding-a-smartphone-in-their-hands-28751-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="flex flex-col gap-3 md:gap-4 mt-0 md:mt-8"> <!-- Staggered down slightly -->
+                        <!-- Vertical 9:16 -->
+                        <div class="relative w-full aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <!-- Vertical 9:16 -->
+                        <div class="relative w-full aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-man-runs-past-stone-wall-1456-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                    </div>
+
+                    <!-- Column 4 -->
+                    <div class="flex flex-col gap-3 md:gap-4">
+                        <!-- Vertical 9:16 -->
+                        <div class="relative w-full aspect-[9/16] rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-woman-drinking-coffee-while-using-a-laptop-42171-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <!-- Horizontal -->
+                        <div class="relative w-full aspect-video rounded-2xl md:rounded-3xl overflow-hidden bg-zinc-900 shadow-sm group">
+                            <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-man-training-on-the-bars-in-the-gym-23450-large.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Box: Reviews Section -->
+        <section id="reviews" class="reveal delay-100 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-20 overflow-hidden transition-colors duration-700 shadow-sm">
+            <div class="px-6 md:px-12 lg:px-16 mb-12">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div class="max-w-2xl">
+                        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-4">Client Success</h2>
+                        <p class="text-base md:text-lg text-zinc-600 dark:text-zinc-400">See how top brands are scaling their creative testing and dominating paid social.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Marquee Container -->
+            <div id="reviews-container" class="relative w-full hide-scrollbar group cursor-grab active:cursor-grabbing py-4 select-none touch-pan-y">
+                <!-- Scrolling Content Wrapper -->
+                <div id="reviews-track" class="flex w-max will-change-transform">
+                    <!-- Set 1 -->
+                    <div id="reviews-set-1" class="flex gap-4 md:gap-6 pr-4 md:pr-6">
+                        
+                        <!-- Review Card 1 -->
+                        <div class="w-[320px] md:w-[420px] bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] flex-shrink-0 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div>
+                                <div class="flex gap-1.5 mb-6 text-orange-500">
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                </div>
+                                <p class="text-zinc-700 dark:text-zinc-300 text-sm md:text-base leading-relaxed mb-8">"Uglyfox completely transformed our testing pipeline. We went from launching 2 ads a week to 50. Our CPA dropped by 40% in the first month."</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border-2 border-boxLight dark:border-boxDark">
+                                    <img src="https://i.pravatar.cc/150?img=32" alt="Avatar" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-zinc-900 dark:text-white">Sarah Jenkins</h4>
+                                    <p class="text-xs text-zinc-500">CMO, Glow Beauty</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 2 -->
+                        <div class="w-[320px] md:w-[420px] bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] flex-shrink-0 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div>
+                                <div class="flex gap-1.5 mb-6 text-orange-500">
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                </div>
+                                <p class="text-zinc-700 dark:text-zinc-300 text-sm md:text-base leading-relaxed mb-8">"The avatars look so real that our audience couldn't tell the difference. Being able to iterate on hooks without re-shooting is a superpower."</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border-2 border-boxLight dark:border-boxDark">
+                                    <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-zinc-900 dark:text-white">David Chen</h4>
+                                    <p class="text-xs text-zinc-500">Founder, TechFlow</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 3 -->
+                        <div class="w-[320px] md:w-[420px] bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] flex-shrink-0 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div>
+                                <div class="flex gap-1.5 mb-6 text-orange-500">
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                </div>
+                                <p class="text-zinc-700 dark:text-zinc-300 text-sm md:text-base leading-relaxed mb-8">"We stopped negotiating with influencers and moved our entire budget to Uglyfox. The performance editing is specifically tailored for the TikTok algorithm."</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border-2 border-boxLight dark:border-boxDark">
+                                    <img src="https://i.pravatar.cc/150?img=5" alt="Avatar" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-zinc-900 dark:text-white">Elena Rodriguez</h4>
+                                    <p class="text-xs text-zinc-500">Growth Lead, FitApp</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 4 -->
+                        <div class="w-[320px] md:w-[420px] bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] flex-shrink-0 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div>
+                                <div class="flex gap-1.5 mb-6 text-orange-500">
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-lucide="star" class="w-4 h-4 text-zinc-300 dark:text-zinc-700 fill-current"></i>
+                                </div>
+                                <p class="text-zinc-700 dark:text-zinc-300 text-sm md:text-base leading-relaxed mb-8">"Scale without scaling headcount. We have the output of a 10-person creative team for a fraction of the cost. Incredible technology."</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border-2 border-boxLight dark:border-boxDark">
+                                    <img src="https://i.pravatar.cc/150?img=12" alt="Avatar" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-zinc-900 dark:text-white">Marcus Thorne</h4>
+                                    <p class="text-xs text-zinc-500">CEO, NextGen SaaS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="reviews-set-2" class="flex gap-4 md:gap-6 pr-4 md:pr-6" aria-hidden="true">
+                        <!-- Cloned via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Box: Pricing Section -->
+        <section id="pricing" class="reveal delay-200 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-20 px-6 md:px-12 lg:px-16 transition-colors duration-700 shadow-sm">
+            <div class="mb-14 text-center">
+                <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-4">Transparent Pricing</h2>
+                <p class="text-base md:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">Scale your ad creative without scaling your headcount. Choose the plan that fits your growth.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+                <!-- Tier 1: Pilot -->
+                <div class="pricing-card group bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] shadow-sm transition-all duration-300 flex flex-col cursor-pointer hover:-translate-y-2 hover:shadow-xl hover:border-zinc-300 dark:hover:border-zinc-700" onclick="selectPricingTier(this)">
+                    <h3 class="text-2xl font-semibold mb-2 text-zinc-900 dark:text-white">Pilot</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-sm mb-8">Perfect for testing AI creatives.</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-semibold tracking-tight text-zinc-900 dark:text-white">$999</span>
+                        <span class="text-zinc-500 dark:text-zinc-400 font-medium">/mo</span>
+                    </div>
+                    <ul class="space-y-4 mb-10 flex-1">
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>10 AI-Generated UGC Ads</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>Standard Avatar Library</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>Basic Editing & Captions</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>48-Hour Turnaround</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full py-4 px-6 bg-boxLight dark:bg-boxDark group-hover:bg-zinc-100 dark:group-hover:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200/50 dark:border-zinc-800/50 rounded-full text-sm font-semibold text-center transition-colors">Start Pilot</a>
+                </div>
+
+                <!-- Tier 2: Scale (Highlighted) -->
+                <div class="pricing-card bg-zinc-900 dark:bg-white border-2 border-zinc-900 dark:border-white p-8 md:p-10 rounded-[2rem] shadow-xl transition-all duration-300 flex flex-col relative transform md:-translate-y-4 cursor-pointer hover:-translate-y-6 hover:shadow-2xl ring-4 ring-orange-500/30 ring-offset-4 ring-offset-[#F5F5F3] dark:ring-offset-[#131314]" onclick="selectPricingTier(this)">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-600 to-orange-400 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase shadow-lg shadow-orange-500/30 border border-white/20 z-10">
+                        Most Popular
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2 text-white dark:text-black">Scale</h3>
+                    <p class="text-zinc-400 dark:text-zinc-500 text-sm mb-8">For brands ready to dominate paid social.</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-semibold tracking-tight text-white dark:text-black">$2,499</span>
+                        <span class="text-zinc-400 dark:text-zinc-500 font-medium">/mo</span>
+                    </div>
+                    <ul class="space-y-4 mb-10 flex-1">
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-200 dark:text-zinc-700">
+                            <div class="w-5 h-5 rounded-full bg-zinc-800 dark:bg-zinc-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-white dark:text-black"></i>
+                            </div>
+                            <span>30 AI-Generated UGC Ads</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-200 dark:text-zinc-700">
+                            <div class="w-5 h-5 rounded-full bg-zinc-800 dark:bg-zinc-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-white dark:text-black"></i>
+                            </div>
+                            <span>Premium & Custom Avatars</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-200 dark:text-zinc-700">
+                            <div class="w-5 h-5 rounded-full bg-zinc-800 dark:bg-zinc-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-white dark:text-black"></i>
+                            </div>
+                            <span>Advanced Hook Variations</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-200 dark:text-zinc-700">
+                            <div class="w-5 h-5 rounded-full bg-zinc-800 dark:bg-zinc-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-white dark:text-black"></i>
+                            </div>
+                            <span>Performance Analytics</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-200 dark:text-zinc-700">
+                            <div class="w-5 h-5 rounded-full bg-zinc-800 dark:bg-zinc-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-white dark:text-black"></i>
+                            </div>
+                            <span>Priority 24-Hour Turnaround</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full py-4 px-6 bg-white dark:bg-black hover:bg-zinc-100 dark:hover:bg-zinc-900 text-black dark:text-white rounded-full text-sm font-semibold text-center transition-transform hover:scale-[1.02] active:scale-95 shadow-md">Scale Now</a>
+                </div>
+
+                <!-- Tier 3: Enterprise -->
+                <div class="pricing-card group bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 p-8 md:p-10 rounded-[2rem] shadow-sm transition-all duration-300 flex flex-col cursor-pointer hover:-translate-y-2 hover:shadow-xl hover:border-zinc-300 dark:hover:border-zinc-700" onclick="selectPricingTier(this)">
+                    <h3 class="text-2xl font-semibold mb-2 text-zinc-900 dark:text-white">Enterprise</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-sm mb-8">Custom workflows for high-volume needs.</p>
+                    <div class="mb-8 flex items-end h-[60px]">
+                        <span class="text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white">Custom</span>
+                    </div>
+                    <ul class="space-y-4 mb-10 flex-1">
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>100+ AI-Generated UGC Ads</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>Voice Cloning & Custom Training</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>API Access & Integrations</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            <div class="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-zinc-900 dark:text-white"></i>
+                            </div>
+                            <span>Dedicated Creative Director</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full py-4 px-6 bg-boxLight dark:bg-boxDark group-hover:bg-zinc-100 dark:group-hover:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200/50 dark:border-zinc-800/50 rounded-full text-sm font-semibold text-center transition-colors">Contact Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Box 4: Contact Section -->
+        <section id="contact" class="reveal delay-300 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2.5rem] py-24 px-6 lg:px-16 transition-colors duration-700 shadow-sm relative overflow-hidden">
+            <!-- Subtle background accent -->
+            <div class="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] bg-orange-400/5 dark:bg-orange-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="max-w-5xl mx-auto relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    
+                    <!-- Left Column: Typography & Status -->
+                    <div class="text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#0a0a0a] border border-zinc-200/50 dark:border-zinc-800/50 text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-300 mb-8 transition-colors duration-700 shadow-sm">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            Available for projects
+                        </div>
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-6 leading-[1.1]">
+                            Let's build your <br class="hidden md:block"/> AI ad engine.
+                        </h2>
+                        <p class="text-base md:text-lg text-zinc-600 dark:text-zinc-400 max-w-md mx-auto md:mx-0">
+                            Skip the discovery calls and prolonged onboarding. Reach out directly and let's start scaling your creatives today.
+                        </p>
+                    </div>
+                    
+                    <!-- Right Column: Interactive Contact Cards -->
+                    <div class="flex flex-col gap-5">
+                        
+                        <!-- Email Card -->
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=uglyfoxindia@gmail.com" target="_blank" rel="noopener noreferrer" 
+                           class="group relative flex items-center justify-between p-6 md:p-8 bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all duration-300 overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="flex items-center gap-5 relative z-10">
+                                <div class="w-16 h-16 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-8 h-8">
+                                        <path fill="#4caf50" d="M45,16.2l-5,2.75l-5,4.73V40h7.5C43.88,40,45,38.88,45,37.5V16.2z"/>
+                                        <path fill="#1e88e5" d="M3,16.2l3.61,2.06l6.39,5.43V40H5.5C4.12,40,3,38.88,3,37.5V16.2z"/>
+                                        <path fill="#e53935" d="M35,11.2l-11,8.25L13,11.2l-0.34-0.26C13.56,9.66,15.19,9,17.06,9h13.88c1.88,0,3.5,0.66,4.41,1.94L35,11.2z"/>
+                                        <path fill="#c62828" d="M45,16.2c0-2.31-1.89-4.52-4.13-5.26L35,11.2l5,12.48L45,16.2z"/>
+                                        <path fill="#fbc02d" d="M3,16.2l5,7.48L13,11.2l-5.87-0.26C4.89,11.68,3,13.89,3,16.2z"/>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <h4 class="text-lg font-semibold text-zinc-900 dark:text-white mb-1">Shoot us an email</h4>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400 font-medium">uglyfoxindia@gmail.com</p>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-center text-zinc-400 group-hover:text-orange-500 group-hover:bg-white dark:group-hover:bg-zinc-900 group-hover:border-orange-200 dark:group-hover:border-orange-500/30 group-hover:shadow-md transition-all z-10">
+                                <i data-lucide="arrow-up-right" class="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                            </div>
+                        </a>
+
+                        <!-- Instagram Card -->
+                        <a href="https://instagram.com/uglyfox.in" target="_blank" rel="noopener noreferrer" 
+                           class="group relative flex items-center justify-between p-6 md:p-8 bg-white dark:bg-[#0a0a0a] border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-pink-200 dark:hover:border-pink-500/30 transition-all duration-300 overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="flex items-center gap-5 relative z-10">
+                                <div class="w-16 h-16 bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3 shadow-sm">
+                                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8" xmlns="http://www.w3.org/2000/svg">
+                                        <defs>
+                                            <linearGradient id="ig" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#FCCF57"/>
+                                                <stop offset="0.25" stop-color="#F77038"/>
+                                                <stop offset="0.5" stop-color="#E92C4B"/>
+                                                <stop offset="0.75" stop-color="#C52F8F"/>
+                                                <stop offset="1" stop-color="#5B51D8"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M7 2C4.23858 2 2 4.23858 2 7V17C2 19.7614 4.23858 22 7 22H17C19.7614 22 22 19.7614 22 17V7C22 4.23858 19.7614 2 17 2H7ZM7 4H17C18.6569 4 20 5.34315 20 7V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4 18.6569 4 17V7C4 5.34315 5.34315 4 7 4ZM12 7C9.23858 7 7 9.23858 7 12C7 14.7614 9.23858 17 12 17C14.7614 17 17 14.7614 17 12C17 9.23858 14.7614 7 12 7ZM9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12ZM17.5 7.5C17.5 8.05228 17.0523 8.5 16.5 8.5C15.9477 8.5 15.5 8.05228 15.5 7.5C15.5 6.94772 15.9477 6.5 16.5 6.5C17.0523 6.5 17.5 6.94772 17.5 7.5Z" fill="url(#ig)"/>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <h4 class="text-lg font-semibold text-zinc-900 dark:text-white mb-1">Slide into our DMs</h4>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400 font-medium">@uglyfox.in</p>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-boxLight dark:bg-boxDark border border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-center text-zinc-400 group-hover:text-pink-500 group-hover:bg-white dark:group-hover:bg-zinc-900 group-hover:border-pink-200 dark:group-hover:border-pink-500/30 group-hover:shadow-md transition-all z-10">
+                                <i data-lucide="arrow-up-right" class="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-10 text-center transition-colors">
+        <div class="flex items-center justify-center gap-3 mb-6">
+            <div class="w-6 h-6 bg-gradient-to-tr from-orange-600 to-orange-400 flex items-center justify-center rounded-[6px] shadow-sm">
+                <div class="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            <span class="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Uglyfox</span>
+        </div>
+        <div class="flex justify-center gap-6 mb-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            <a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms of Service</a>
+            <a href="https://instagram.com/uglyfox.in" target="_blank" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Instagram</a>
+        </div>
+        <div class="text-sm text-zinc-400 dark:text-zinc-600">
+            &copy; 2026 Uglyfox Systems. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" class="fixed bottom-8 right-6 md:right-10 transform translate-y-16 opacity-0 pointer-events-none transition-all duration-500 bg-zinc-900 text-white dark:bg-white dark:text-black p-4 rounded-full shadow-2xl z-40 hover:bg-zinc-800 dark:hover:bg-zinc-200 hover:-translate-y-1 focus:outline-none flex items-center justify-center group" aria-label="Scroll to top">
+        <i data-lucide="arrow-up" class="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </button>
+
+    <script>
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+        });
+
+        // Intersection Observer for Scroll Reveals
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only reveal once
+                }
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => revealOnScroll.observe(el));
+
+        // Reusable Interactive Cursor & Touch Marquee Logic
+        function initInteractiveMarquee(containerId, trackId, setId1, setId2) {
+            const container = document.getElementById(containerId);
+            const track = document.getElementById(trackId);
+            const set1 = document.getElementById(setId1);
+            const set2 = document.getElementById(setId2);
+
+            if (container && track && set1 && set2) {
+                // Clone contents from set 1 to set 2 dynamically to ensure exact match
+                set2.innerHTML = set1.innerHTML;
+
+                let currentX = 0;
+                let targetSpeed = 0.8; // Default speed
+                let currentSpeed = 0.8;
+                let setWidth = 0;
+                
+                // Touch/Drag state
+                let isDragging = false;
+                let startX = 0;
+                let lastDragX = 0;
+
+                function calculateWidth() {
+                    setWidth = set1.getBoundingClientRect().width;
+                }
+                window.addEventListener('resize', calculateWidth);
+                setTimeout(calculateWidth, 300); // Give DOM/images time to load
+
+                // --- Mouse Interactions ---
+                container.addEventListener('mousemove', (e) => {
+                    if(isDragging) return;
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const center = rect.width / 2;
+                    const normalized = (x - center) / center;
+                    targetSpeed = normalized * 4; // Pan based on mouse position
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    if(isDragging) return;
+                    targetSpeed = 0.8; 
+                });
+
+                // --- Touch / Drag Interactions ---
+                const startDrag = (e) => {
+                    isDragging = true;
+                    startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+                    lastDragX = startX;
+                    container.classList.remove('cursor-grab');
+                    container.classList.add('cursor-grabbing');
+                    // Stop native momentum scroll
+                    targetSpeed = 0;
+                    currentSpeed = 0;
+                };
+
+                const onDrag = (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault(); // Prevent vertical scroll while swiping marquee
+                    const currentDragX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+                    const diff = lastDragX - currentDragX;
+                    
+                    // Directly move the track
+                    currentX += diff;
+                    lastDragX = currentDragX;
+                    
+                    // Calculate swipe velocity for momentum release
+                    targetSpeed = diff * 0.5; 
+                };
+
+                const stopDrag = () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    container.classList.add('cursor-grab');
+                    container.classList.remove('cursor-grabbing');
+                    
+                    // Return to normal slow scroll if velocity is low
+                    if(Math.abs(targetSpeed) < 1) targetSpeed = 0.8;
+                    else targetSpeed = targetSpeed > 0 ? 0.8 : -0.8; 
+                };
+
+                container.addEventListener('mousedown', startDrag);
+                container.addEventListener('touchstart', startDrag, { passive: true });
+                
+                window.addEventListener('mousemove', onDrag, { passive: false });
+                window.addEventListener('touchmove', onDrag, { passive: false });
+                
+                window.addEventListener('mouseup', stopDrag);
+                window.addEventListener('touchend', stopDrag);
+
+                // --- Animation Loop ---
+                function animateMarquee() {
+                    if (setWidth > 0) {
+                        if (!isDragging) {
+                            currentSpeed += (targetSpeed - currentSpeed) * 0.05;
+                            currentX += currentSpeed;
+                        }
+
+                        // Infinite loop logic 
+                        let displayX = currentX;
+                        if (displayX < 0) {
+                            currentX = setWidth - (Math.abs(currentX) % setWidth);
+                            displayX = currentX;
+                        } else if (displayX >= setWidth) {
+                            currentX = currentX % setWidth;
+                            displayX = currentX;
+                        }
+
+                        track.style.transform = `translateX(-${displayX}px)`;
+                    }
+                    requestAnimationFrame(animateMarquee);
+                }
+
+                requestAnimationFrame(animateMarquee);
+            }
+        }
+
+        // Initialize multiple marquees
+        initInteractiveMarquee('marquee-container', 'marquee-track', 'marquee-set-1', 'marquee-set-2');
+        initInteractiveMarquee('reviews-container', 'reviews-track', 'reviews-set-1', 'reviews-set-2');
+
+        // Pricing Select Logic
+        function selectPricingTier(selectedCard) {
+            const allCards = document.querySelectorAll('.pricing-card');
+            
+            // Define active styles (similar to the hardcoded middle tier)
+            const ringClasses = ['ring-4', 'ring-orange-500/30', 'ring-offset-4', 'ring-offset-[#F5F5F3]', 'dark:ring-offset-[#131314]'];
+            
+            allCards.forEach(card => {
+                // Reset to default scale and remove rings
+                card.style.transform = '';
+                card.classList.remove(...ringClasses, 'border-orange-500');
+            });
+            
+            // Add ring to selected
+            selectedCard.classList.add(...ringClasses, 'border-orange-500');
+            // Slight lift effect via inline style overrides tailwind translate
+            if(window.innerWidth > 768) {
+                selectedCard.style.transform = 'translateY(-16px)';
+            }
+        }
+
+        // Scroll to Top Logic
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        
+        window.addEventListener('scroll', () => {
+            // Show button after scrolling down 400px
+            if (window.scrollY > 400) {
+                scrollToTopBtn.classList.remove('opacity-0', 'translate-y-16', 'pointer-events-none');
+            } else {
+                scrollToTopBtn.classList.add('opacity-0', 'translate-y-16', 'pointer-events-none');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>
